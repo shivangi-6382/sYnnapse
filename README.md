@@ -131,6 +131,50 @@ We use **cosine similarity** because it:
  
 ---
 
+## Retrieval Pipeline (Module B)
+
+The retrieval system works as follows:
+
+### Step 1: Query Encoding
+- Input image is passed through the trained encoder
+- A 512-dimensional L2-normalized embedding is generated
+
+### Step 2: Embedding Database
+- All gallery images are pre-encoded
+- Stored as:
+  - Embedding matrix (N × 512)
+  - Corresponding item IDs
+
+### Step 3: Similarity Computation
+
+Two retrieval approaches were implemented:
+
+#### (A) Cosine Similarity (Baseline)
+- Implemented using Scikit-learn
+- Direct similarity computation between:
+  
+  query_embedding vs database_embeddings
+
+#### (B) FAISS Indexing (Optimized)
+
+FAISS is used for fast similarity search on large embedding databases.
+
+- Embeddings stored in FAISS index
+- Inner Product search used (equivalent to cosine similarity with L2-normalized vectors)
+- Enables scalable nearest neighbor retrieval
+
+FAISS significantly reduces retrieval latency compared to brute-force cosine computation.
+
+### Step 4: Ranking
+- Similarity scores sorted in descending order
+- Top-K highest scoring images returned
+
+### Step 5: Output
+System returns:
+- Top-K similar images
+- Corresponding similarity scores
+
+
 ## Evaluation Protocol
 
 Performance is reported using:
@@ -145,6 +189,21 @@ These metrics verify whether a **correct instance appears within Top-K retrieved
 
 
 ---
+
+## Why This Approach Was Chosen
+
+### Problem Alignment
+
+The problem requires:
+- Visual encoding
+- Similarity-based retrieval
+- Open-set recognition
+
+Metric learning directly optimizes embedding distances,
+making it more suitable than classification models.
+
+---
+
 
 ## Sample Retrieval Visualization ⭐
 
